@@ -10,37 +10,43 @@ interface Task {
 }
 
 function App() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [darkTheme, setDarkTheme] = useState<boolean>(false);
-
-  useEffect(() => {
+  const [tasks, setTasks] = useState<Task[]>(() => {
     const storedTasks = localStorage.getItem("tasks");
-    if (storedTasks) {
-      setTasks(JSON.parse(storedTasks));
-    }
-  }, []);
-
+    return storedTasks ? JSON.parse(storedTasks) : [];
+  });
+  const [darkTheme, setDarkTheme] = useState<boolean>(() => {
+    const storedTheme = localStorage.getItem("darkTheme");
+    return storedTheme ? JSON.parse(storedTheme) : false;
+  });
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
+  useEffect(() => {
+    localStorage.setItem("darkTheme", JSON.stringify(darkTheme));
+  }, [darkTheme]);
+
   const addTask = (title: string) => {
     const newTask: Task = { id: Date.now(), title, completed: false };
-    setTasks([...tasks, newTask]);
+    setTasks((prevTasks) => [...prevTasks, newTask]);
   };
 
   const editTask = (id: number, title: string) => {
-    setTasks(tasks.map((task) => (task.id === id ? { ...task, title } : task)));
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => 
+        task.id === id && !task.completed ? { ...task, title } : task
+      )
+    );
   };
 
   const deleteTask = (id: number) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
   };
 
   const toggleCompleted = (id: number) => {
-    setTasks(
-      tasks.map((task) =>
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
         task.id === id ? { ...task, completed: !task.completed } : task
       )
     );
