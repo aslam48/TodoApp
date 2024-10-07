@@ -97,12 +97,14 @@ const Task: React.FC<TaskProps> = ({ task, onEditTask, onDeleteTask, onToggleCom
             </span>
           </div>
           <div className=" flex items-center space-x-3">
-            <button onClick={handleEdit}>
-              <CiEdit
-                size={20}
-                className=" text-gray-500 hover:text-yellow-500"
-              />
-            </button>
+          {!task.completed && (
+              <button onClick={handleEdit}>
+                <CiEdit
+                  size={20}
+                  className=" text-gray-500 hover:text-yellow-500"
+                />
+              </button>
+            )}
             <button onClick={handleDelete}>
               <AiOutlineDelete
                 size={18}
